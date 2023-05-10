@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Project, User } = require('../models');
+const { Project, User, Comment} = require('../models');
 const withAuth = require('../utils/auth');
 
 router.get('/', async (req, res) => {
@@ -25,6 +25,31 @@ router.get('/', async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
+});
+
+// get single post
+router.get("/post/:id", (req, res) => {
+  Project.findByPk(req.params.id, {
+    include: [
+      User,
+      {
+        model: Comment,
+        include: [User],
+      },
+    ],
+  })
+    .then((projectData) => {
+      if (projectData) {
+        const post = projectData.get({ plain: true });
+
+        res.render("comment", { post });
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((err) => {
+      res.status(500).json(err);
+    });
 });
 
 router.get('/project/:id', async (req, res) => {
