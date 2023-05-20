@@ -37,4 +37,18 @@ router.delete('/:id', withAuth, async (req, res) => {
   }
 });
 
+
+router.put("/edit/:id", async (req, res) => {
+  try {
+    const data = await Project.update( req.body, {
+      where: {
+      id:  req.params.id,
+      }
+    })
+    res.json(data);
+  } catch(err) {
+    res.status(500).json(err);
+  }
+})
+
 module.exports = router;

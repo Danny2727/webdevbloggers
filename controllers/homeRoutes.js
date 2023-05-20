@@ -41,6 +41,7 @@ router.get("/post/:id", (req, res) => {
     .then((projectData) => {
       if (projectData) {
         const post = projectData.get({ plain: true });
+        console.log(post);
 
         res.render("comment", { post });
       } else {
@@ -93,6 +94,21 @@ router.get('/profile', withAuth, async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+router.get('/edit/:id', withAuth, async (req, res) =>{
+  try{ 
+    const data = await Project.findByPk(req.params.id)
+    const post = data.get({ plain: true});
+    res.render('editpost', {
+      post,
+      logged_in: true
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+
+});
+
 
 router.get('/login', (req, res) => {
   // If the user is already logged in, redirect the request to another route
